@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'myapp/css/style.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <header class="page-header">
+            <h1>Company Name</h1>
+        </header>
+        {% include './menu.html' %}
+        <section class="regContent">
+            <form name="frm" method="post" novalidate>
+                {% csrf_token %}
+                <table cellpadding="7">
+                    {% for frm in form %}
+                    <tr>
+                        <td>{{frm.label_tag}}</td>
+                        <td>{{frm}}</td>
+                        <td>&nbsp;{{frm.errors|striptags}}</td>
+                    </tr>
+                    {% endfor %}
+                    <tr> 
+                        <td colspan="2" align="center"><input type="submit" value="Register"></td>
+                    </tr>
+                </table>
+            </form>
+            {% if messages %}
+            {% for msg in messages %}
+                {{msg}}
+            {% endfor %}
+            {% endif %}
+        </section>
+        <footer class="page-footer">
+            
+        </footer>
+    </div>
+</body>
+</html>

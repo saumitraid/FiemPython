@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'myapp/css/style.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <header class="page-header">
+            <h1>Company Name</h1>
+        </header>
+        {% include './menu.html' %}
+        <div class="banner">
+
+        </div>
+        <section class="container">
+            <section class="content dv-margin-right">
+                1
+            </section>
+            <section class="content dv-margin-right">
+                2
+            </section>
+            <section class="content">
+                3
+            </section>
+        </section>
+        <footer class="page-footer">
+            
+        </footer>
+    </div>
+</body>
+</html>

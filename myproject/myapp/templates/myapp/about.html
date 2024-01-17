@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'myapp/css/style.css' %}">
+</head>
+<body>
+    <div class="wrapper">
+        <header class="page-header">
+            <h1>Company Name</h1>
+        </header>
+        {% include './menu.html' %}
+        <section class="container">
+            <form name="frm" method="post">
+                {% csrf_token %}
+                <table cellpadding="7">
+                    <tr>
+                        <td>Enter 1st Number:-</td>
+                        <td><input type="number" name="n1" required></td>
+                    </tr>
+                    <tr>
+                        <td>Enter 2nd Number:-</td>
+                        <td><input type="number" name="n2" required></td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="submit" value="Addition">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            {% if sum %}
+            <h2>Addition of two numbers is {{sum}}</h2>
+            {% endif %}
+        </section>
+        <footer class="page-footer">
+            
+        </footer>
+    </div>
+</body>
+</html>
