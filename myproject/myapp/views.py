@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib import messages
 from . forms import MyRegFrm
+from . models import Product
 
 # Create your views here.
 def home(request):
@@ -30,3 +31,7 @@ def signUp(request):
     else:
         form=MyRegFrm()
     return render(request, 'myapp/signUp.html', {'form':form})
+
+def displayProduct(request):
+    allprod=Product.objects.all()
+    return render(request, 'myapp/dispProd.html',{'allprod':allprod})

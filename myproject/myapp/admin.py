@@ -1,9 +1,20 @@
 from django.contrib import admin
-from . models import Doctor
+from django.utils.html import format_html
+from . models import Doctor, Product, Category
 # Register your models here.
 
 @admin.register(Doctor)
 class DoctorAdmin(admin.ModelAdmin):
     list_display=('dname','ddegree')
+
+admin.site.register(Category)
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    def prdImg(self, obj):
+        return format_html('<img src="{}" width="50" height="50"/>'.format(obj.image.url))
+    
+    list_display=('name','description', 'price', 'prdImg', 'cat')
+
 
 

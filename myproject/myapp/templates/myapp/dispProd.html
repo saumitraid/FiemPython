@@ -8,28 +8,30 @@
 <meta name="Description" content="Enter your description here"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-<title>Registration</title>
+<title>Display Prodtuct</title>
 </head>
 <body>
-    <div class="container">
-        <div class="col-6">
-            <form name="frm" method="post" novalidate>
-                {% csrf_token %}
-                {% for frm in form %}
-                <div class="form-group">
-                    {{frm.label_tag}} <span class="text-danger">{{frm.errors|striptags}}</span>
-                    {{frm}}
-                  </div>
-                {% endfor %}
-                <input type="submit" value="Register" class="btn btn-primary">
-            </form>
-            {% if messages %}
-            {% for msg in messages %}
-                <div class="alert alert-success">
-                    {{msg}}
+    <div class="container-fluid">
+        <h2 class="text-center">All Products</h2>
+        <div class="row">
+        {% if allprod %}
+            {% for item in allprod %}
+            <div class="card col-4">
+                <img src="media/{{item.image}}" class="card-img-top">
+                <div class="card-header">
+                    <h4 class="card-title">{{item.name}}</h4>
                 </div>
+                <div class="card-body">
+                    <p class="card-text text-justify">{{item.description}}</p>
+                </div>
+                <div class="card-footer">
+                    Price &#8377;{{item.price}}
+                </div>
+            </div>
             {% endfor %}
-            {% endif %}
+        {% else %}
+            <h3 class="text-center text-danger">Sorry No products found</h3>
+        {% endif %}
         </div>
     </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
