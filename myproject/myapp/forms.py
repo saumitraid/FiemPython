@@ -1,5 +1,5 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from . models import MyUser
 
 class MyRegFrm(UserCreationForm):
@@ -22,3 +22,9 @@ class MyRegFrm(UserCreationForm):
     class Meta:
         model = MyUser
         fields = ("username", 'first_name', 'last_name', 'email', 'mobile', 'address')
+
+class LoginFrm(AuthenticationForm):
+    username=forms.CharField(label="Username",
+            widget=forms.TextInput(attrs={'class':'form-control border-primary','placeholder':'Enter user name'}))
+    password=forms.CharField(label="Password",
+            widget=forms.PasswordInput(attrs={'class':'form-control border-primary','placeholder':'Enter your password'}))

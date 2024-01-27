@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib import messages
-from . forms import MyRegFrm
+from django.contrib.auth import login, authenticate
+from . forms import MyRegFrm, LoginFrm
 from . models import Product
 
 # Create your views here.
@@ -35,3 +36,17 @@ def signUp(request):
 def displayProduct(request):
     allprod=Product.objects.all()
     return render(request, 'myapp/dispProd.html',{'allprod':allprod})
+
+def signin(request):
+    if request.POST:
+        form=LoginFrm(request=request, data=request.POST)
+        if form.is_valid():
+            uname=form.cleaned_data['username']
+            upass=form.changed_data['password']
+            user=authenticate(username=uname, password=upass)
+            if user is not None:
+                login(request, user)
+                return redirect('/allprod')
+    else:
+        form=LoginFrm()
+    return render(request, 'myapp/signIn.html', {'form':form})
