@@ -13,11 +13,12 @@
 <body>
     <div class="container-fluid">
         <h2 class="text-center">All Products</h2>
+        <h4>Hi {{request.user.get_full_name}}</h4><a href="{% url 'signout-page' %}" class="btn btn-primary">Logout</a>
         <div class="row">
         {% if allprod %}
             {% for item in allprod %}
             <div class="card col-4">
-                <img src="media/{{item.image}}" class="card-img-top">
+                <img src="../../media/{{item.image}}" class="card-img-top">
                 <div class="card-header">
                     <h4 class="card-title">{{item.name}}</h4>
                 </div>
@@ -26,7 +27,9 @@
                 </div>
                 <div class="card-footer">
                     Price &#8377;{{item.price}}
+                    <a href="/add_to_cart/{{item.p_id}}"><button type="button">Add to Cart</button></a>
                 </div>
+
             </div>
             {% endfor %}
         {% else %}
