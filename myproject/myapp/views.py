@@ -1,9 +1,13 @@
+import razorpay
+from django.conf import settings
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from . forms import MyRegFrm, LoginFrm
 from . models import Product, Cart
 from django.http import HttpResponse
+
 
 
 # Create your views here.
@@ -36,11 +40,8 @@ def signUp(request):
     return render(request, 'myapp/signUp.html', {'form':form})
 
 def displayProduct(request):
-    if request.user.is_authenticated:
-        allprod=Product.objects.all()
-        return render(request, 'myapp/dispProd.html',{'allprod':allprod})
-    else:
-        return redirect('/signin/')
+    allprod=Product.objects.all()
+    return render(request, 'myapp/dispProd.html',{'allprod':allprod})
 
 def signin(request):
     if request.POST:
@@ -67,7 +68,7 @@ def add_to_cart(request, p_id):
                                                         user=request.user)
         cart_item.quantity += 1
         cart_item.save()
-        return redirect('/allcart/')
+        return redirect('/cart/')
     else:
         return redirect('/signin/')
 
@@ -87,5 +88,42 @@ def remove_cart(request,id):
         return redirect('/allcart/')
     else:
         return redirect('/signin/')
+
+def initiate_payment(request):
+    if request.method == "POST":
+        amount = int(request.POST["amount"]) * 100  # Amount in paise
+
+        client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
+
+        payment_data = {
+            "amount": amount,
+            "currency": "INR",
+            "receipt": "order_receipt",
+            "notes": {
+                "email": "user_email@example.com",
+            },
+        }
+
+        order = client.order.create(data=payment_data)
+        
+        # Include key, name, description, and image in the JSON response
+        response_data = {
+            "id": order["id"],
+            "amount": order["amount"],
+            "currency": order["currency"],
+            "key": settings.RAZORPAY_API_KEY,
+            "name": "My Company",
+            "description": "Payment for Your Product",
+            "image": "https://yourwebsite.com/logo.png",  # Replace with your logo URL
+        }
+        
+        return JsonResponse(response_data)
+    return redirect('myapp:viewCart.html')
+
+def payment_success(request):
+    return render(request, "cart/payment_success.html")
+
+def payment_failed(request):
+    return render(request, "cart/payment_failed.html")
 
 

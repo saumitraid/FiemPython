@@ -1,3 +1,4 @@
+{% load mathfilters %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,6 +8,7 @@
 <meta name="Description" content="Enter your description here"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <title>All Cart</title>
 </head>
 <body>
@@ -28,7 +30,7 @@
                     <a href="/remove/{{item.id}}/" class="btn btn-danger">Remove</a></td>
                     <td>{{item.quantity}}</td>
                     <td>&#8377;{{item.product.price}}</td>
-                    <td></td>
+                    <td>{{ item.quantity | mul:item.product.price}}</td>
                 </tr>
                 {% endfor %}
                 <tr>
@@ -37,9 +39,68 @@
                 </tr>
             </thead>
         </table>
+        <form id="payment-form">
+            {% csrf_token %}
+            <input type="hidden" id="amount" name="amount" value="{{ total_price }}">
+            <button type="button" id="pay-button" class="btn btn-primary">Pay Now</button>
+        </form>
     </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("#pay-button").click(function(e) {
+            e.preventDefault(); // Prevent the default form submission
+            
+            // Get the amount entered by the user
+            const amount = $("#amount").val();
+
+            // Make an AJAX request to initiate the payment
+            $.ajax({
+                type: "POST",
+                url: "/initiate-payment/",
+                data: { amount: amount },
+                dataType: "json",
+                beforeSend: function(xhr) {
+                    xhr.setRequestHeader("X-CSRFToken", $("[name=csrfmiddlewaretoken]").val());
+                },
+                success: function(data) {
+                    // Initialize Razorpay Checkout with the received values
+                    const options = {
+                        key: data.key,
+                        amount: data.amount,
+                        currency: data.currency,
+                        order_id: data.id,
+                        name: data.name,
+                        description: data.description,
+                        image: data.image,
+                        handler: function(response) {
+                            // Handle the payment success or failure and redirect accordingly
+                            if (response.razorpay_payment_id) {
+                                // Payment successful, redirect to the success URL
+                                window.location.href = "/payment-success/";
+                            } else {
+                                // Payment failed or canceled, redirect to the failure URL
+                                window.location.href = "/payment-failed/";
+                            }
+                        },
+                        prefill: {
+                            name: "Customer Name",
+                            email: "customer@example.com",
+                            contact: "customer_contact",
+                        },
+                    };
+
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+                },
+                error: function(error) {
+                    console.error("Error initiating payment:", error);
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

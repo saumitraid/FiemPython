@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'myapp',
+    'mathfilters',
 ]
 
 MIDDLEWARE = [
@@ -134,3 +135,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL='myapp.MyUser'
+
+RAZORPAY_API_KEY = ''
+RAZORPAY_API_SECRET = ''
+SECURE_CROSS_ORIGIN_OPENER_POLICY = "same-origin-allow-popups"
