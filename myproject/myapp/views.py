@@ -133,3 +133,11 @@ def payment_failed(request):
     return render(request, "cart/payment_failed.html")
 
 
+def viewOrders(request):
+    if request.user.is_authenticated:
+        cart_items=Order.objects.filter(user=request.user)
+        return render(request, 'myapp/viewOrders.html', {'cart_items': cart_items})
+    else:
+        return redirect('/signin/')
+
+
