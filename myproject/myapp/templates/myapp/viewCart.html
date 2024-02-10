@@ -41,6 +41,7 @@
         </table>
         <form id="payment-form">
             {% csrf_token %}
+            <textarea name="address" id="address" cols="30", rows="3" class="form-control" placeholder="Enter Delivery Address"></textarea>
             <input type="hidden" id="amount" name="amount" value="{{ total_price }}">
             <button type="button" id="pay-button" class="btn btn-primary">Pay Now</button>
         </form>
@@ -55,12 +56,13 @@
             
             // Get the amount entered by the user
             const amount = $("#amount").val();
+            const address=$("#address").val();
 
             // Make an AJAX request to initiate the payment
             $.ajax({
                 type: "POST",
                 url: "/initiate-payment/",
-                data: { amount: amount },
+                data: { amount: amount, address:address },
                 dataType: "json",
                 beforeSend: function(xhr) {
                     xhr.setRequestHeader("X-CSRFToken", $("[name=csrfmiddlewaretoken]").val());
@@ -86,9 +88,7 @@
                             }
                         },
                         prefill: {
-                            name: "Customer Name",
-                            email: "customer@example.com",
-                            contact: "customer_contact",
+                            name: "Card Holder Name",
                         },
                     };
 

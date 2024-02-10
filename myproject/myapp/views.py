@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, logout
 from . forms import MyRegFrm, LoginFrm
-from . models import Product, Cart
+from . models import Product, Cart, Order
 from django.http import HttpResponse
 
 
@@ -68,7 +68,7 @@ def add_to_cart(request, p_id):
                                                         user=request.user)
         cart_item.quantity += 1
         cart_item.save()
-        return redirect('/cart/')
+        return redirect('/allcart/')
     else:
         return redirect('/signin/')
 
@@ -92,7 +92,7 @@ def remove_cart(request,id):
 def initiate_payment(request):
     if request.method == "POST":
         amount = int(request.POST["amount"]) * 100  # Amount in paise
-
+        address=request.POST['address']
         client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
 
         payment_data = {
@@ -112,11 +112,17 @@ def initiate_payment(request):
             "amount": order["amount"],
             "currency": order["currency"],
             "key": settings.RAZORPAY_API_KEY,
-            "name": "My Company",
+            "name": "My Project",
             "description": "Payment for Your Product",
             "image": "https://yourwebsite.com/logo.png",  # Replace with your logo URL
         }
+        cart_items=Cart.objects.filter(user=request.user)
+        # payment_id=response_data.id
+        for cart in cart_items:
+            Order.objects.get_or_create(user=request.user, product= cart.product, quantity=cart.quantity, payment_status='success', address=address)
         
+        Cart.objects.filter(user=request.user).delete()
+
         return JsonResponse(response_data)
     return redirect('myapp:viewCart.html')
 
